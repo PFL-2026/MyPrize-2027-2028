@@ -727,6 +727,39 @@ body.act-sorting, body.act-sorting * { cursor: grabbing !important; user-select:
 .terms-asset.ta-sorting { opacity: 0.55; outline: 2px dashed var(--brand); outline-offset: 4px; }
 body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select: none !important; }
 @media print { .ta-move { display: none !important; } }
+
+/* Performance tab */
+.perf-lead { font-size: 14px; line-height: 1.6; margin: 0 0 24px; max-width: 760px; }
+.perf-wheel { display: grid; grid-template-columns: 1fr auto 1fr auto 1fr auto 1fr; align-items: stretch; gap: 8px; margin-top: 4px; }
+.perf-step { border: 1px solid var(--hair); border-top: 3px solid var(--brand); border-radius: 4px; padding: 12px 12px 10px; background: var(--paper); }
+.perf-step-num { font-family: 'Oswald', Impact, sans-serif; font-weight: 700; font-size: 13px; color: #fff; background: var(--brand); width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 8px; }
+.perf-step-name { font-family: 'Oswald', Impact, sans-serif; font-weight: 700; font-size: 15px; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink); margin-bottom: 4px; }
+.perf-step p { margin: 0; font-size: 12.5px; line-height: 1.45; color: var(--muted); }
+.perf-arrow { align-self: center; color: var(--brand); font-size: 18px; font-weight: 700; }
+.perf-loop { margin: 10px 0 0; padding: 9px 12px; background: rgba(10,73,171,0.06); border-radius: 4px; font-size: 13px; font-weight: 600; color: var(--brand); text-align: center; }
+.perf-kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.perf-kpi { border: 1px solid var(--hair); border-radius: 4px; padding: 10px 12px; }
+.perf-kpi b { display: block; font-size: 14px; color: var(--brand); margin-bottom: 3px; }
+.perf-kpi span { font-size: 12.5px; color: var(--muted); line-height: 1.4; }
+.perf-table-wrap { overflow-x: auto; }
+.perf-table { width: 100%; border-collapse: collapse; font-size: 12.5px; line-height: 1.45; }
+.perf-table th { text-align: left; font-family: 'Oswald', Impact, sans-serif; font-weight: 700; font-size: 11.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #fff; background: var(--brand); padding: 7px 10px; }
+.perf-table td { padding: 8px 10px; border-bottom: 1px solid var(--hair); vertical-align: top; }
+.perf-table td.perf-act { font-weight: 700; color: var(--ink); width: 24%; }
+.perf-table tbody tr:nth-child(even) td { background: rgba(10,73,171,0.035); }
+@media (max-width: 720px) {
+  .perf-wheel { grid-template-columns: 1fr; }
+  .perf-arrow { transform: rotate(90deg); justify-self: center; }
+  .perf-kpis { grid-template-columns: 1fr 1fr; }
+  .perf-table { min-width: 620px; }
+}
+@media print {
+  .perf-lead { font-size: 9.5pt; }
+  .perf-step p, .perf-kpi span, .perf-table { font-size: 8.5pt; }
+  .perf-table th, .perf-table tbody tr:nth-child(even) td { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .perf-step-num, .perf-loop { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .perf-wheel, .perf-kpis, .perf-table tr { break-inside: avoid; }
+}
 </style>
 </head>
 <body>
@@ -755,6 +788,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
   <div class="tabs no-print" role="tablist">
     <button type="button" class="tab" data-tab="commercials" role="tab" aria-selected="true">Commercials</button>
     <button type="button" class="tab" data-tab="activations" role="tab" aria-selected="false">Activations</button>
+    <button type="button" class="tab" data-tab="performance" role="tab" aria-selected="false">Performance</button>
     <button type="button" class="tab" data-tab="audience" role="tab" aria-selected="false">Audience</button>
   </div>
 
@@ -824,6 +858,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
               <li><strong>MyPrize Prize Drop:</strong>
                 <ul>
                   <li>One (1) fan-cam giveaway on the big screen between fights at every Event</li>
+                  <li>The winner rips an MVP pack from MyPrize Packs live on the big screen</li>
                   <li>Prizes funded by MyPrize; promotion subject to sweepstakes rules in eligible territories</li>
                 </ul>
               </li>
@@ -885,6 +920,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
               <li>MyPrize-branded flame graphic and instant replay for the biggest shot or knockout of each fight</li>
               <li>Applies at all Events on the in-arena screens</li>
               <li>Each moment clipped and posted on MVP social, tagging MyPrize</li>
+              <li><strong>‘On Fire’ card:</strong> the fighter behind each event’s On Fire moment signs a limited card, added to the next MVP pack on MyPrize Packs (subject to fighter agreement)</li>
             </ul>
           </div>
         </div>
@@ -923,6 +959,12 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
               <li>Post-event: official photos and recap videos</li>
               <li>Usable across MyPrize-owned channels, subject to agreed rules</li>
               <li>Content access applies to all US MVP Events across the Term</li>
+              <li><strong>MVP owned channels:</strong>
+                <ul>
+                  <li>CRM: dedicated MyPrize email and push notification sends to MVP’s opted-in fan database, in eligible territories</li>
+                  <li>Retargeting: MyPrize tracking pixel on MVP’s website and event pages, so MyPrize can retarget MVP visitors (subject to privacy rules)</li>
+                </ul>
+              </li>
             </ul>
           </div>
         </div>
@@ -1313,6 +1355,66 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
     </div>
 
   </section>
+
+  <section class="panel" data-tab="performance">
+    <div class="panel-head">
+      <h1>Performance <span>Framework</span></h1>
+      <div class="standfirst">How app installs and players are built into every activation, tracked and improved across the partnership · 2027-2028</div>
+    </div>
+
+    <p class="perf-lead">Performance runs through the whole partnership, not just the end-of-season report. Every activation carries a trackable call to action, every event is measured, and the results shape the next event. That loop is the MyPrize performance flywheel.</p>
+
+    <h3 class="terms-section-title">The Performance Flywheel</h3>
+    <div class="perf-wheel">
+      <div class="perf-step"><div class="perf-step-num">1</div><div class="perf-step-name">Integrate</div><p>A trackable call to action built into every activation: MVP offer, codes, QR codes and tracked links</p></div>
+      <div class="perf-arrow" aria-hidden="true">→</div>
+      <div class="perf-step"><div class="perf-step-num">2</div><div class="perf-step-name">Drive</div><p>Fight week, fight night and after the bell: MVP moments send fans into the MyPrize app</p></div>
+      <div class="perf-arrow" aria-hidden="true">→</div>
+      <div class="perf-step"><div class="perf-step-num">3</div><div class="perf-step-name">Measure</div><p>Installs, registrations, purchases and pack rips traced back to each activation, creator and event</p></div>
+      <div class="perf-arrow" aria-hidden="true">→</div>
+      <div class="perf-step"><div class="perf-step-num">4</div><div class="perf-step-name">Optimise</div><p>More weight to the best-performing activations, creators, content and offers at the next event</p></div>
+    </div>
+    <div class="perf-loop">↻ Repeats every event for the full Term, so performance improves as the partnership runs</div>
+
+    <h3 class="terms-section-title">What We’re Driving</h3>
+    <div class="perf-kpis">
+      <div class="perf-kpi"><b>App installs</b><span>New MyPrize users from MVP fans</span></div>
+      <div class="perf-kpi"><b>Registrations</b><span>Verified sign-ups in eligible states</span></div>
+      <div class="perf-kpi"><b>Purchases &amp; Packs</b><span>First coin purchases and MVP pack rips</span></div>
+      <div class="perf-kpi"><b>Return players</b><span>Players coming back every event</span></div>
+    </div>
+
+    <h3 class="terms-section-title">Where Our Activations Fit</h3>
+    <div class="perf-table-wrap">
+      <table class="perf-table">
+        <thead><tr><th>Activation</th><th>How performance is built in</th><th>Drives</th><th>Tracked by</th></tr></thead>
+        <tbody>
+            <tr><td class="perf-act">Trademark Rights &amp; Designation</td><td>An MVP-exclusive MyPrize welcome offer, used across all MyPrize marketing</td><td>Installs, registrations</td><td>MVP offer code</td></tr>
+            <tr><td class="perf-act">In-Arena Branding &amp; Prize Drop</td><td>Prize Drop entry through the MyPrize app via QR code on the arena screens; the winner rips an MVP pack live</td><td>Installs, registrations, pack rips</td><td>QR scans, in-app entries</td></tr>
+            <tr><td class="perf-act">Presenting Partner · MMA</td><td>Event-specific offer across all pre-event marketing and on the night</td><td>Installs, registrations</td><td>Event code, tracked links</td></tr>
+            <tr><td class="perf-act">Presenting Partner · Boxing &amp; Creator Access</td><td>Unique code for each creator, used in watch-alongs and posts</td><td>Installs, first purchases</td><td>Creator codes and links</td></tr>
+            <tr><td class="perf-act">MyPrize ‘On Fire’ Moment</td><td>Clips posted with a tracked link; the fighter’s signed card goes into the next MVP pack</td><td>Clicks, installs, pack rips</td><td>Tracked links, pack sales</td></tr>
+            <tr><td class="perf-act">Social Content Distribution</td><td>Tracked link on every MyPrize-tagged post and story</td><td>Clicks, installs</td><td>Tracked links (UTMs)</td></tr>
+            <tr><td class="perf-act">Athlete Ambassador Program</td><td>A personal code for each ambassador across content and appearances</td><td>Installs, registrations</td><td>Ambassador codes</td></tr>
+            <tr><td class="perf-act">MVP Digital &amp; Video Content</td><td>CRM sends to MVP’s fans, MyPrize retargeting pixel, tracked links in video content</td><td>Installs, return players</td><td>CRM links, pixel, UTMs</td></tr>
+            <tr><td class="perf-act">VIP Hospitality &amp; Access</td><td>Used to reward and retain MyPrize’s top players</td><td>Retention, spend</td><td>Invited player cohort</td></tr>
+            <tr><td class="perf-act">Account Management</td><td>Post-event summaries, monthly dashboard and annual review</td><td>Continuous improvement</td><td>Shared dashboard</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="terms-section-title">How We Track &amp; Measure</h3>
+    <dl class="terms-grid">
+      <dt>Tracking</dt>
+      <dd><ul><li>Unique codes by activation, creator and ambassador</li><li>QR codes for in-arena and on-site activations</li><li>Tracked links (UTMs) on all digital and social</li><li>MyPrize pixel on MVP’s website and event pages</li></ul></dd>
+      <dt>Attribution</dt>
+      <dd>MyPrize’s attribution partner links each install, registration and purchase back to its source</dd>
+      <dt>Reporting</dt>
+      <dd><ul><li>Post-event performance summary</li><li>Monthly dashboard across all activations</li><li>Annual review against agreed targets</li></ul></dd>
+      <dt>Agreed at kick-off</dt>
+      <dd><ul><li>Shared tracking set-up and data access</li><li>Eligible states for every promotion</li><li>Baseline performance and targets</li></ul></dd>
+    </dl>
+  </section>
   <section class="panel" data-tab="audience">
     <div class="panel-head">
       <h1>Audience <span>Demographics</span></h1>
@@ -1603,7 +1705,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
 </template>
 <script>
 (function () {
-  var BUILD = "c75e87d2f45";
+  var BUILD = "c12c5bb1b25";
   var KEY = 'mvp-myprize-doc-v1';
   var IDBNAME = KEY + ':images';
   var sheet = document.getElementById('sheet');
