@@ -856,7 +856,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
           <div class="terms-asset-body">
             <h4>Presenting Partner <span class="terms-asset-sub">1 × BOXING EVENT</span></h4>
             <ul>
-              <li><strong>Status:</strong> MyPrize presents one (1) MVP boxing event each year — e.g. ‘MVP Orlando presented by MyPrize’</li>
+              <li><strong>Status:</strong> MyPrize presents one (1) US boxing event each year — e.g. ‘MVP Orlando presented by MyPrize’</li>
               <li><strong>Event marketing &amp; promotion:</strong> MyPrize featured and tagged as presenting partner across all pre-event marketing and promotion</li>
               <li><strong>Additional in-arena assets:</strong>
                 <ul>
@@ -868,8 +868,8 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
               <li><strong>Creator Access Program:</strong>
                 <ul>
                   <li>Up to three (3) MyPrize streamers or creators at the event, agreed by both parties</li>
-                  <li>Fight week: open workouts, press conference and weigh-ins</li>
-                  <li>Fight night: VIP tickets, production table viewing, backstage access and content zone</li>
+                  <li>Fight week access: open workouts, press conference and weigh-ins</li>
+                  <li>Fight night access: VIP tickets, production table viewing, backstage access and content zone</li>
                   <li>Content: ringside or prelim broadcast cameo, and collab posts on MVP social</li>
                   <li>Creator fees, travel and accommodation covered by MyPrize; content subject to MVP approval and local advertising rules</li>
                 </ul>
@@ -892,9 +892,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
         <div class="terms-asset">
           <div class="terms-asset-num">06</div>
           <div class="terms-asset-body">
-            <h4>Social Content Distribution</h4>
-            <ul>
-              <li>6 × short form social posts per year</li><li>1 × fight week post per event</li><li>All social posts to be agreed in advance</li>
+            <h4>Social Content Distribution</h4><ul><li>1 × fight week post per event</li><li>All social posts to be agreed in advance</li>
               <li>Logo inclusion and tag of MyPrize on each post</li></ul></div></div>
 
         <div class="terms-asset">
@@ -904,13 +902,13 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
             <ul>
               <li>Two (2) MVP athletes for the Term — one (1) MMA athlete and one (1) boxing athlete, agreed by both parties</li>
               <li>All deliverables decided together by MVP and MyPrize, including:
-                <ul>
+                </li><ul>
                   <li>Tailored content for MyPrize channels</li>
                   <li>Dedicated MyPrize-branded production with the ambassadors (e.g. fight-week challenges with MyPrize creators)</li>
                   <li>Appearances</li>
                   <li>Fight-kit logo, where permitted</li>
-                </ul>
-              </li>
+                </ul><li>Athlete fees are additional to the partnership fee and agreed separately with each athlete</li>
+              
             </ul>
           </div>
         </div>
@@ -924,7 +922,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
               <li>During event: rapid-turn highlight cutdowns</li>
               <li>Post-event: official photos and recap videos</li>
               <li>Usable across MyPrize-owned channels, subject to agreed rules</li>
-              <li>Content access applies to all MVP Events across the Term</li>
+              <li>Content access applies to all US MVP Events across the Term</li>
             </ul>
           </div>
         </div>
@@ -934,7 +932,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
           <div class="terms-asset-body">
             <h4>VIP Hospitality &amp; Access&nbsp;</h4>
             <ul>
-              <li>Five (5) VIP tickets&nbsp;</li><li>Five&nbsp; (5) GA tickets</li><li>Optional extras: on-stage meet and greet at weigh-ins; backstage tour on fight night; access to press conferences and face-offs&nbsp;</li></ul></div></div>
+              <li>Five (5) VIP tickets&nbsp;</li><li>Five&nbsp; (5) GA tickets&nbsp;</li></ul></div></div>
 
         <div class="terms-asset">
           <div class="terms-asset-num">10</div>
@@ -1605,7 +1603,7 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
 </template>
 <script>
 (function () {
-  var BUILD = "dmvs1kw0r";
+  var BUILD = "c75e87d2f45";
   var KEY = 'mvp-myprize-doc-v1';
   var IDBNAME = KEY + ':images';
   var sheet = document.getElementById('sheet');
@@ -2560,6 +2558,76 @@ body.ta-dragging, body.ta-dragging * { cursor: grabbing !important; user-select:
   }
   document.addEventListener('pointerup', endAssetSort);
   document.addEventListener('pointercancel', endAssetSort);
+
+
+  // ---- Tab / Shift+Tab in edit mode: indent or outdent the current bullet
+  function caretLi() {
+    var sel = window.getSelection();
+    if (!sel || !sel.rangeCount) return null;
+    var n = sel.anchorNode, el = n && (n.nodeType === 1 ? n : n.parentElement);
+    var li = el && el.closest && el.closest('li');
+    return li && sheet.contains(li) ? li : null;
+  }
+  function keepCaret(li, fn) {
+    var sel = window.getSelection(), pos = 0;
+    if (sel.rangeCount) {
+      var r = sel.getRangeAt(0), pre = document.createRange();
+      pre.selectNodeContents(li); pre.setEnd(r.startContainer, r.startOffset);
+      pos = pre.toString().length;
+    }
+    fn();
+    var w = document.createTreeWalker(li, NodeFilter.SHOW_TEXT), t, last = null;
+    while ((t = w.nextNode())) {
+      last = t;
+      if (pos <= t.length) break;
+      pos -= t.length;
+    }
+    var rr = document.createRange();
+    if (t) rr.setStart(t, pos);
+    else if (last) rr.setStart(last, last.length);
+    else rr.setStart(li, 0);
+    rr.collapse(true); sel.removeAllRanges(); sel.addRange(rr);
+  }
+  function indentLi(li) {
+    var prev = li.previousElementSibling;
+    if (!prev || prev.tagName !== 'LI') return false;
+    var tag = li.parentNode.tagName.toLowerCase();
+    var sub = prev.lastElementChild;
+    if (!sub || (sub.tagName !== 'UL' && sub.tagName !== 'OL')) {
+      sub = document.createElement(tag);
+      prev.appendChild(sub);
+    }
+    keepCaret(li, function () { sub.appendChild(li); });
+    return true;
+  }
+  function outdentLi(li) {
+    var list = li.parentNode, parentLi = list.parentNode;
+    if (!parentLi || parentLi.tagName !== 'LI') return false;
+    keepCaret(li, function () {
+      // bullets that sat below this one now sit beneath it
+      var rest = [], s = li.nextElementSibling;
+      while (s) { rest.push(s); s = s.nextElementSibling; }
+      if (rest.length) {
+        var sub = li.lastElementChild;
+        if (!sub || (sub.tagName !== 'UL' && sub.tagName !== 'OL')) {
+          sub = document.createElement(list.tagName.toLowerCase()); li.appendChild(sub);
+        }
+        rest.forEach(function (x) { sub.appendChild(x); });
+      }
+      parentLi.parentNode.insertBefore(li, parentLi.nextSibling);
+      if (!list.children.length) list.parentNode.removeChild(list);
+    });
+    return true;
+  }
+  sheet.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab' || !editing() || e.ctrlKey || e.metaKey || e.altKey) return;
+    var li = caretLi();
+    if (!li) return;
+    e.preventDefault();
+    if (e.shiftKey ? outdentLi(li) : indentLi(li)) {
+      sheet.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  }, true);
 
 })();
 </script>
