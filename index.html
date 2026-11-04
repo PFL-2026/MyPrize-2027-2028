@@ -805,6 +805,19 @@ body.editing .tbl-tools.show { display: flex; }
   .aud-stat b { font-size: 15pt; } .aud-handle b { font-size: 10pt; } .aud-handle img { height: 18px; }
   .aud-row:nth-child(even) { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* Add / delete partnership assets (edit mode) */
+.ta-tools { position: absolute; top: 0; right: 74px; z-index: 2; display: flex; gap: 6px; }
+.ta-tools button, .ta-addend {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 600; font-size: 11px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--ink); background: rgba(255,255,255,0.95);
+  border: 1px solid var(--hair); border-radius: 3px; padding: 4px 8px; cursor: pointer;
+}
+.ta-tools button:hover, .ta-addend:hover { border-color: var(--brand); color: var(--brand); }
+.ta-tools button[data-ta="del"]:hover { border-color: #c0392b; color: #c0392b; }
+.ta-addend { display: block; margin: 14px 0 4px; padding: 10px 16px; font-size: 12px; border-style: dashed; }
+body:not(.editing) .ta-tools, body:not(.editing) .ta-addend { display: none !important; }
+@media print { .ta-tools, .ta-addend { display: none !important; } }
 </style>
 </head>
 <body>
@@ -939,6 +952,19 @@ body.editing .tbl-tools.show { display: flex; }
               <li><strong>Boxing events only:</strong>
                 <ul>
                   <li>1 × ring mat logo</li><li>LED screen branding throughout arena</li></ul></li></ul></div></div>
+
+        <div class="terms-asset">
+          <div class="terms-asset-num">05</div>
+          <div class="terms-asset-body">
+            <h4>MyPrize Canvas Collectibles Giveaway</h4>
+            <ul>
+              <li>One (1) authenticated piece of the MyPrize-branded canvas or ring mat given away at every Event</li>
+              <li><strong>MVP:</strong> cuts and authenticates the canvas piece (with a certificate of authenticity) and announces the giveaway on MVP social, tagging MyPrize</li>
+              <li><strong>MyPrize:</strong> runs the competition in the MyPrize app, selects the winner and ships the prize</li>
+              <li>Competition open to MyPrize users in eligible territories, subject to MyPrize’s competition terms and sweepstakes rules</li>
+            </ul>
+          </div>
+        </div>
 
         <div class="terms-asset">
           <div class="terms-asset-num">06</div>
@@ -1968,7 +1994,7 @@ body.editing .tbl-tools.show { display: flex; }
 </template>
 <script>
 (function () {
-  var BUILD = "dmw0v0fcq";
+  var BUILD = "c99f8d1048e";
   var KEY = 'mvp-myprize-doc-v1';
   var IDBNAME = KEY + ':images';
   var sheet = document.getElementById('sheet');
@@ -2032,6 +2058,7 @@ body.editing .tbl-tools.show { display: flex; }
       el.classList.remove('open'); el.classList.remove('drag-over');
     });
     Array.prototype.forEach.call(root.querySelectorAll('.ta-move'), function (el) { el.parentNode.removeChild(el); });
+    Array.prototype.forEach.call(root.querySelectorAll('.ta-tools, .ta-addend'), function (el) { el.parentNode.removeChild(el); });
     Array.prototype.forEach.call(root.querySelectorAll('.tbl-tools'), function (el) { el.parentNode.removeChild(el); });
     Array.prototype.forEach.call(root.querySelectorAll('.col-hot'), function (el) { el.classList.remove('col-hot'); });
     Array.prototype.forEach.call(root.querySelectorAll('.ta-sorting'), function (el) { el.classList.remove('ta-sorting'); });
@@ -3115,6 +3142,43 @@ body.editing .tbl-tools.show { display: flex; }
     }, true);
     document.addEventListener('scroll', function () { if (curRow && tools.classList.contains('show')) place(curRow); }, true);
   })();
+
+
+  // ---- Add / delete partnership assets (edit mode)
+  function addAssetTools() {
+    var assets = sheet.querySelectorAll('.terms-asset');
+    Array.prototype.forEach.call(assets, function (el) {
+      if (!el.querySelector(':scope > .ta-tools')) el.insertAdjacentHTML('afterbegin', '<span class="ta-tools edit-only" contenteditable="false"><button type="button" data-ta="add">+ Add below</button><button type="button" data-ta="del">Delete</button></span>');
+    });
+    var last = assets[assets.length - 1];
+    if (last && !sheet.querySelector('.ta-addend')) last.insertAdjacentHTML('afterend', '<button type="button" class="ta-addend edit-only" contenteditable="false">+ Add asset</button>');
+  }
+  function newAsset() {
+    var d = document.createElement('div');
+    d.className = 'terms-asset';
+    d.innerHTML = '\n          <div class="terms-asset-num">00</div>\n          <div class="terms-asset-body">\n            <h4>New Asset</h4>\n            <ul>\n              <li>Add detail</li>\n            </ul>\n          </div>\n        ';
+    return d;
+  }
+  addAssetTools();
+  sheet.addEventListener('click', function (e) {
+    if (!editing()) return;
+    var b = e.target.closest && e.target.closest('[data-ta], .ta-addend');
+    if (!b || !sheet.contains(b)) return;
+    e.preventDefault();
+    var asset = b.closest('.terms-asset'), fresh = null;
+    if (b.classList.contains('ta-addend')) { fresh = newAsset(); b.parentNode.insertBefore(fresh, b); }
+    else if (b.getAttribute('data-ta') === 'add') { fresh = newAsset(); asset.parentNode.insertBefore(fresh, asset.nextSibling); }
+    else if (b.getAttribute('data-ta') === 'del') {
+      if (!window.confirm('Delete this asset?')) return;
+      asset.parentNode.removeChild(asset);
+    }
+    addAssetHandles(); addAssetTools(); renumberAssets(); persist();
+    if (fresh) {
+      var h4 = fresh.querySelector('h4'), r = document.createRange();
+      r.selectNodeContents(h4); var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      fresh.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    }
+  });
 
 })();
 </script>
